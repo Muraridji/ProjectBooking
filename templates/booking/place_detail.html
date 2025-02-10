@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ place.title }}</title>
+</head>
+<body>
+    <h1>{{ place.title }}</h1>
+    <p><strong>Опис:</strong> {{ place.body }}</p>
+    <p><strong>Ціна:</strong> {{ place.price }} грн</p>
+    <p><strong>Ємність:</strong> {{ place.capacity }} осіб</p>
+    <p><strong>Доступність:</strong> {% if place.is_available %}Доступно{% else %}Немає в наявності{% endif %}</p>
+
+    <a href="{{ url_for('index') }}">Назад до списку місць</a>
+</body>
+</html>
