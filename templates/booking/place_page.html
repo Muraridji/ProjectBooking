@@ -15,6 +15,12 @@
                 <p><strong>Ціна:</strong> {{ place.price }} грн</p>
                 <p><strong>Ємність:</strong> {{ place.capacity }} осіб</p>
                 <p><strong>Доступність:</strong> {% if place.is_available %}Доступно{% else %}Немає в наявності{% endif %}</p>
+                {% if place.is_available %}
+                    <form action="{% url 'rent_place' place.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">Зняти</button>
+                    </form>
+                {% endif %}
             </li>
         {% empty %}
             <li>Немає доступних місць.</li>

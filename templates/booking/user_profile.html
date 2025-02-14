@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профіль користувача</title>
+</head>
+<body>
+    <h1>Профіль користувача</h1>
+    <p><strong>Ім'я:</strong> {{ user.username }}</p>
+
+    <h2>Орендовані місця</h2>
+    <ul>
+        {% for booking in bookings %}
+            <li>
+                <h2>{{ booking.place.title }}</h2>
+                <p><strong>Опис:</strong> {{ booking.place.body }}</p>
+                <p><strong>Ціна:</strong> {{ booking.place.price }} грн</p>
+                <p><strong>Ємність:</strong> {{ booking.place.capacity }} осіб</p>
+            </li>
+        {% empty %}
+            <li>У вас немає орендованих місць.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
