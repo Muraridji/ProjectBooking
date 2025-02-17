@@ -22,6 +22,8 @@ app_name = "booking"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
+
     path('', views.home_view, name="home"),
     path('place_page/', views.place_page_view, name="places"),
 ]

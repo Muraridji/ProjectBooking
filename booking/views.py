@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from booking.models import Place, Booking
 
+
 # Create your views here.
 def home_view(request):
     return render(request, "booking/index.html")
