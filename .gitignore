@@ -1,2 +1,29 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore SQLite database file
+db.sqlite3
+
+# Ignore Django migration files
+accounts/migrations/
+booking/migrations/
+
+# Ignore environment files
+.env
+
+# Ignore other common non-essential files
+*.log
+*.pot
+*.pyc
+*.db
+
+# Ignore IDE-specific files (example for VSCode, PyCharm)
+.vscode/
 .idea/
-.venv
+
+# Ignore other system files (e.g., MacOS, Windows)
+.DS_Store
+Thumbs.db

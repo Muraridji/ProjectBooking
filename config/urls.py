@@ -26,4 +26,6 @@ urlpatterns = [
 
     path('', views.home_view, name="home"),
     path('place_page/', views.place_page_view, name="places"),
+    path('book/<int:place_id>/', views.book_place_view, name="book_place"),
+    path('profile/', views.user_profile_view, name="user_profile"),
 ]

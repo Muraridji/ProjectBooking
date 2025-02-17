@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Список місць</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <h1>Усі місця</h1>
@@ -15,11 +16,45 @@
                 <p><strong>Ціна:</strong> {{ place.price }} грн</p>
                 <p><strong>Ємність:</strong> {{ place.capacity }} осіб</p>
                 <p><strong>Доступність:</strong> {% if place.is_available %}Доступно{% else %}Немає в наявності{% endif %}</p>
-
+                
+                <!-- Booking form -->
+                <form class="book-place-form" data-place-id="{{ place.id }}">
+                    {% csrf_token %}
+                    <button type="submit">Зняти</button>
+                </form>
             </li>
         {% empty %}
             <li>Немає доступних місць.</li>
         {% endfor %}
     </ul>
+
+    <a href="{% url 'user_profile' %}">
+        <button>Мій профіль</button>
+    </a>
+
+    <script>
+        // Handle the booking form submission
+        $(document).ready(function() {
+            $('.book-place-form').on('submit', function(event) {
+                event.preventDefault();
+                
+                var form = $(this);
+                var placeId = form.data('place-id');
+                
+                $.ajax({
+                    url: '{% url "book_place" 0 %}'.replace("0", placeId),  // Dynamically set the place id
+                    type: 'POST',
+                    data: form.serialize(),  // Send the form data
+                    success: function(response) {
+                        // Redirect to the user profile after successful booking
+                        window.location.href = "{% url 'user_profile' %}";
+                    },
+                    error: function() {
+                        alert('Не вдалося забронювати місце. Спробуйте ще раз.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
