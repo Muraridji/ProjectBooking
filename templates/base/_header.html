@@ -1,5 +1,71 @@
-<nav class="navbar bg-body-tertiary">
-  <div class="container-fluid">
-    <span class="navbar-brand mb-0 h1">Navbar</span>
+<header class="p-3 bg-dark text-white">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+      <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="{% url 'home' %}" class="nav-link px-2 text-white fs-5">Home</a></li>
+      </ul>
+      <div class="text-end">
+        {% if user.is_authenticated %}
+        <style>
+          .custom-dropdown .dropdown-item {
+              background-color: transparent; /* Устанавливаем прозрачный фон */
+              color: #000; /* Цвет текста по умолчанию */
+              transition: background-color 0.3s ease; /* Плавное изменение цвета фона */
+          }
+
+          .custom-dropdown .dropdown-item:hover {
+              background-color: #28a745; /* Цвет фона при наведении */
+              border-radius: 10px;
+              box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.2);/* Добавляем небольшую рамку фона при наведении */
+          }
+          </style>
+
+        <div class="row align-items-center">
+          <div class="col-auto">
+              {{ user }}
+          </div>
+          <div class="col-auto ms-auto">
+              <div class="dropdown custom-dropdown">
+                  <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <b>Accounts</b>
+                  </button>
+                  <ul class="dropdown-menu bg-dark">
+                      <li><b><a href="{% url 'accounts:login' %}" class="dropdown-item text-white">Change account</a></b></li>
+                      <li><b><a href="{% url 'accounts:register' %}" class="dropdown-item text-white">Create new</a></b></li>
+                  </ul>
+                  <b><a href="{% url 'accounts:logout' %}" class="btn btn-outline-danger ms-2">Logout</a></b>
+              </div>
+          </div>
+      </div>
+        {% else %}
+
+        <style>
+          .custom-dropdown .dropdown-item {
+              background-color: transparent; /* Устанавливаем прозрачный фон */
+              color: #000; /* Цвет текста по умолчанию */
+              transition: background-color 0.3s ease; /* Плавное изменение цвета фона */
+          }
+
+          .custom-dropdown .dropdown-item:hover {
+              background-color: #ffc107; /* Цвет фона при наведении */
+              color: #000 !important; /* Цвет текста при наведении */
+              border-radius: 10px;
+              box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.2);/* Добавляем небольшую рамку фона при наведении */
+          }
+          </style>
+
+
+          <div class="dropdown custom-dropdown">
+            <button class="btn btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <b>Accounts</b>
+            </button>
+            <ul class="dropdown-menu bg-dark">
+              <li><b><a href="{% url 'accounts:login' %}" class="dropdown-item text-white">Log in</a></b></li>
+              <li><b><a href="{% url 'accounts:register' %}" class="dropdown-item text-white">Sign up</a></b></li>
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    </div>
   </div>
-</nav>
+</header>

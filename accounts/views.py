@@ -38,5 +38,9 @@ def login_view(request):
 
             if user:
                 login(request, user)
-                return redirect("user_profile:home")
+                return redirect("home")
         return render(request, "accounts/login_page.html", {"form":form})
+
+def logout_view(request):
+    logout(request)
+    return redirect("home")
