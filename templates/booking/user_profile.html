@@ -20,12 +20,18 @@
                 <p><strong>Ємність:</strong> {{ booking.place.capacity }} осіб</p>
                 <p><strong>Орендовано з:</strong> {{ booking.start_time|date:"d.m.Y H:i" }}</p>
                 <p><strong>До:</strong> {{ booking.end_time|date:"d.m.Y H:i" }}</p>
+                
+
                 <button class="cancel-booking" data-booking-id="{{ booking.id }}">Скасувати бронювання</button>
             </li>
         {% empty %}
             <li>У вас немає орендованих місць.</li>
         {% endfor %}
     </ul>
+
+    <a href="{% url 'places' %}">
+        <button>Перейти до списку місць</button>
+    </a>
 
     <script>
         $(document).ready(function() {
