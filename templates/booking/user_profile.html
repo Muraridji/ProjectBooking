@@ -17,6 +17,8 @@
                 <p><strong>Опис:</strong> {{ booking.place.body }}</p>
                 <p><strong>Ціна:</strong> {{ booking.place.price }} грн</p>
                 <p><strong>Ємність:</strong> {{ booking.place.capacity }} осіб</p>
+                <p><strong>Орендовано з:</strong> {{ booking.start_time|date:"d.m.Y H:i" }}</p>
+                <p><strong>До:</strong> {{ booking.end_time|date:"d.m.Y H:i" }}</p>
             </li>
         {% empty %}
             <li>У вас немає орендованих місць.</li>

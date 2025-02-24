@@ -5,22 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Список місць</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 50%;
+        }
+        .close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <h1>Усі місця</h1>
-
-    <form id="filter-form" method="get">
-        <label for="capacity">Мінімальна ємність:</label>
-        <input type="number" id="capacity" name="capacity" min="1" value="{{ request.GET.capacity|default:'' }}">
-
-        <label for="min_price">Мінімальна ціна:</label>
-        <input type="number" id="min_price" name="min_price" min="0" value="{{ request.GET.min_price|default:'' }}">
-
-        <label for="max_price">Максимальна ціна:</label>
-        <input type="number" id="max_price" name="max_price" min="0" value="{{ request.GET.max_price|default:'' }}">
-
-        <button type="submit">Фільтрувати</button>
-    </form>
 
     <ul>
         {% for place in places %}
@@ -29,17 +43,9 @@
                 <p><strong>Опис:</strong> {{ place.body }}</p>
                 <p><strong>Ціна:</strong> {{ place.price }} грн</p>
                 <p><strong>Ємність:</strong> {{ place.capacity }} осіб</p>
+                <p><strong>Доступність:</strong> {% if place.is_available %}Доступно{% else %}Немає в наявності{% endif %}</p>
 
-                <form class="book-place-form" data-place-id="{{ place.id }}">
-                    {% csrf_token %}
-                    <label for="start_date_{{ place.id }}">Дата початку:</label>
-                    <input type="date" id="start_date_{{ place.id }}" name="start_date" required>
-                    
-                    <label for="end_date_{{ place.id }}">Дата завершення:</label>
-                    <input type="date" id="end_date_{{ place.id }}" name="end_date" required>
-                    
-                    <button type="submit">Зняти</button>
-                </form>
+                <button class="open-modal" data-place-id="{{ place.id }}">Зняти</button>
             </li>
         {% empty %}
             <li>Немає доступних місць.</li>
@@ -50,31 +56,76 @@
         <button>Мій профіль</button>
     </a>
 
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Забронювати місце</h2>
+            <div id="calendar"></div>
+            <form id="booking-form">
+                {% csrf_token %}
+                <input type="hidden" id="place_id" name="place_id">
+                <label for="start_date">Дата початку:</label>
+                <input type="date" id="start_date" name="start_date" required>
+                
+                <label for="end_date">Дата завершення:</label>
+                <input type="date" id="end_date" name="end_date" required>
+                
+                <button type="submit">Підтвердити бронювання</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         $(document).ready(function() {
-            $('.book-place-form').on('submit', function(event) {
-                event.preventDefault();
-                
-                var form = $(this);
-                var placeId = form.data('place-id');
-                var startDate = form.find('input[name="start_date"]').val();
-                var endDate = form.find('input[name="end_date"]').val();
-                
-                if (!startDate || !endDate) {
-                    alert('Будь ласка, виберіть дату початку та завершення.');
-                    return;
+            var modal = $("#booking-modal");
+            var closeBtn = $(".close");
+
+            $(".open-modal").on("click", function() {
+                var placeId = $(this).data("place-id");
+                $("#place_id").val(placeId);
+                loadCalendar(placeId);
+                modal.show();
+            });
+
+            closeBtn.on("click", function() {
+                modal.hide();
+            });
+
+            $(window).on("click", function(event) {
+                if (event.target == modal[0]) {
+                    modal.hide();
                 }
-                
-                $.ajax({
-                    url: '{% url "book_place" 0 %}'.replace("0", placeId),
-                    type: 'POST',
-                    data: form.serialize(),
-                    success: function(response) {
-                        window.location.href = "{% url 'user_profile' %}";
-                    },
-                    error: function() {
-                        alert('Не вдалося забронювати місце. Спробуйте ще раз.');
+            });
+
+            function loadCalendar(placeId) {
+                $.get(`/api/bookings/${placeId}/`, function(data) {
+                    var calendarEl = document.getElementById("calendar");
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: "dayGridMonth",
+                        events: data.bookings.map(booking => ({
+                            title: "Заброньовано",
+                            start: booking.start_time,
+                            end: booking.end_time
+                        }))
+                    });
+                    calendar.render();
+                });
+            }
+
+            $("#booking-form").on("submit", function(event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
+
+                $.post("{% url 'book_place' 0 %}".replace("0", $("#place_id").val()), formData, function(response) {
+                    if (response.success) {
+                        alert("Місце успішно заброньовано!");
+                        modal.hide();
+                        location.reload();
+                    } else {
+                        alert(response.error);
                     }
+                }).fail(function() {
+                    alert("Не вдалося забронювати місце. Спробуйте ще раз.");
                 });
             });
         });

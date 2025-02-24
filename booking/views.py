@@ -9,6 +9,10 @@ from booking.models import Place, Booking
 def home_view(request):
     return render(request, "booking/index.html")
 
+def get_bookings_view(request, place_id):
+    bookings = Booking.objects.filter(place_id=place_id).values("start_time", "end_time")
+    return JsonResponse({"bookings": list(bookings)})
+
 def place_page_view(request):
     places = Place.objects.filter(is_available=True)
     capacity = request.GET.get('capacity')
@@ -29,32 +33,18 @@ def book_place_view(request, place_id):
     place = get_object_or_404(Place, id=place_id)
 
     if not place.is_available:
-        return JsonResponse({'error': 'Place is not available'}, status=400)
+        return JsonResponse({'error': 'Місце недоступне'}, status=400)
 
-    start_date = request.POST.get('start_date')
-    end_date = request.POST.get('end_date')
+    start_date = parse_date(request.POST.get("start_date"))
+    end_date = parse_date(request.POST.get("end_date"))
 
-    if not start_date or not end_date:
-        return JsonResponse({'error': 'Missing start or end date'}, status=400)
+    if not start_date or not end_date or start_date >= end_date:
+        return JsonResponse({'error': 'Невірні дати бронювання'}, status=400)
 
-    start_time = parse_date(start_date)
-    end_time = parse_date(end_date)
+    if Booking.objects.filter(place=place, start_time__lt=end_date, end_time__gt=start_date).exists():
+        return JsonResponse({'error': 'Дати вже зайняті'}, status=400)
 
-    if not start_time or not end_time:
-        return JsonResponse({'error': 'Invalid date format'}, status=400)
-
-    if start_time > end_time:
-        return JsonResponse({'error': 'Start date must be before end date'}, status=400)
-
-    booking = Booking.objects.create(
-        user=request.user,
-        place=place,
-        start_time=start_time,
-        end_time=end_time
-    )
-
-    place.is_available = False
-    place.save()
+    Booking.objects.create(user=request.user, place=place, start_time=start_date, end_time=end_date)
 
     return JsonResponse({'success': True})
 
