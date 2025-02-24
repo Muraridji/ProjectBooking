@@ -20,7 +20,7 @@
                 <p><strong>Ємність:</strong> {{ booking.place.capacity }} осіб</p>
                 <p><strong>Орендовано з:</strong> {{ booking.start_time|date:"d.m.Y H:i" }}</p>
                 <p><strong>До:</strong> {{ booking.end_time|date:"d.m.Y H:i" }}</p>
-                
+
 
                 <button class="cancel-booking" data-booking-id="{{ booking.id }}">Скасувати бронювання</button>
             </li>
@@ -37,9 +37,9 @@
         $(document).ready(function() {
             $(".cancel-booking").click(function() {
                 if (!confirm("Ви впевнені, що хочете скасувати бронювання?")) return;
-                
+
                 var bookingId = $(this).data("booking-id");
-                
+
                 $.ajax({
                     url: "{% url 'delete_booking' 0 %}".replace("0", bookingId),
                     type: "POST",

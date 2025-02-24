@@ -37,22 +37,22 @@
     <form method="GET" action="">
         <label for="min_price">Мінімальна ціна:</label>
         <input type="number" id="min_price" name="min_price" min="0" value="{{ request.GET.min_price }}">
-    
+
         <label for="max_price">Максимальна ціна:</label>
         <input type="number" id="max_price" name="max_price" min="0" value="{{ request.GET.max_price }}">
-    
+
         <label for="min_capacity">Мінімальна ємність:</label>
         <input type="number" id="min_capacity" name="min_capacity" min="1" value="{{ request.GET.min_capacity }}">
-    
+
         <label for="start_date">Дата початку:</label>
         <input type="date" id="start_date" name="start_date" value="{{ request.GET.start_date }}">
-    
+
         <label for="end_date">Дата завершення:</label>
         <input type="date" id="end_date" name="end_date" value="{{ request.GET.end_date }}">
-    
+
         <button type="submit">Фільтрувати</button>
     </form>
-    
+
     <ul>
         {% for place in places %}
             <li>
@@ -81,19 +81,19 @@
             <form id="booking-form">
                 {% csrf_token %}
                 <input type="hidden" id="place_id" name="place_id">
-    
+
                 <label for="username">Ім'я користувача:</label>
                 <input type="text" id="username" name="username" value="{{ user.username }}" readonly>
-    
+
                 <label for="email">Електронна пошта:</label>
                 <input type="email" id="email" name="email" value="{{ user.email }}" readonly>
-    
+
                 <label for="start_date">Дата початку:</label>
                 <input type="date" id="start_date" name="start_date" required>
-    
+
                 <label for="end_date">Дата завершення:</label>
                 <input type="date" id="end_date" name="end_date" required>
-    
+
                 <button type="submit">Підтвердити бронювання</button>
             </form>
         </div>

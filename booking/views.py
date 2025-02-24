@@ -8,8 +8,10 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 
+
 def home_view(request):
     return render(request, "booking/index.html")
+
 
 def get_bookings_view(request, place_id):
     bookings = Booking.objects.filter(place_id=place_id).values("start_time", "end_time")
@@ -18,6 +20,7 @@ def get_bookings_view(request, place_id):
 
 from django.db.models import Q
 from django.utils.dateparse import parse_date
+
 
 def place_page_view(request):
     places = Place.objects.all()
@@ -92,6 +95,7 @@ def user_profile_view(request):
     bookings = Booking.objects.filter(user=request.user)
     return render(request, 'booking/user_profile.html', {'bookings': bookings})
 
+
 @login_required
 def delete_booking_view(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
@@ -100,5 +104,5 @@ def delete_booking_view(request, booking_id):
     booking.place.save()
 
     booking.delete()
-    
+
     return JsonResponse({"success": True})
