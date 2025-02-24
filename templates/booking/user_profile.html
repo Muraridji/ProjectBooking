@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Профіль користувача</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <h1>Профіль користувача</h1>
@@ -19,10 +20,36 @@
                 <p><strong>Ємність:</strong> {{ booking.place.capacity }} осіб</p>
                 <p><strong>Орендовано з:</strong> {{ booking.start_time|date:"d.m.Y H:i" }}</p>
                 <p><strong>До:</strong> {{ booking.end_time|date:"d.m.Y H:i" }}</p>
+                <button class="cancel-booking" data-booking-id="{{ booking.id }}">Скасувати бронювання</button>
             </li>
         {% empty %}
             <li>У вас немає орендованих місць.</li>
         {% endfor %}
     </ul>
+
+    <script>
+        $(document).ready(function() {
+            $(".cancel-booking").click(function() {
+                if (!confirm("Ви впевнені, що хочете скасувати бронювання?")) return;
+                
+                var bookingId = $(this).data("booking-id");
+                
+                $.ajax({
+                    url: "{% url 'delete_booking' 0 %}".replace("0", bookingId),
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    },
+                    success: function(response) {
+                        alert("Бронювання скасовано!");
+                        location.reload();
+                    },
+                    error: function() {
+                        alert("Не вдалося скасувати бронювання. Спробуйте ще раз.");
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

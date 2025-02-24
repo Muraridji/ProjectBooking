@@ -34,7 +34,18 @@
     </style>
 </head>
 <body>
-    <h1>Усі місця</h1>
+    <form id="filter-form" method="get">
+        <label for="capacity">Мінімальна ємність:</label>
+        <input type="number" id="capacity" name="capacity" min="1" value="{{ request.GET.capacity|default:'' }}">
+
+        <label for="min_price">Мінімальна ціна:</label>
+        <input type="number" id="min_price" name="min_price" min="0" value="{{ request.GET.min_price|default:'' }}">
+
+        <label for="max_price">Максимальна ціна:</label>
+        <input type="number" id="max_price" name="max_price" min="0" value="{{ request.GET.max_price|default:'' }}">
+
+        <button type="submit">Фільтрувати</button>
+    </form>
 
     <ul>
         {% for place in places %}
@@ -64,12 +75,19 @@
             <form id="booking-form">
                 {% csrf_token %}
                 <input type="hidden" id="place_id" name="place_id">
+            
+                <label for="username">Ім'я користувача:</label>
+                <input type="text" id="username" name="username" required>
+            
+                <label for="email">Gmail:</label>
+                <input type="email" id="email" name="email" required>
+            
                 <label for="start_date">Дата початку:</label>
                 <input type="date" id="start_date" name="start_date" required>
-                
+            
                 <label for="end_date">Дата завершення:</label>
                 <input type="date" id="end_date" name="end_date" required>
-                
+            
                 <button type="submit">Підтвердити бронювання</button>
             </form>
         </div>

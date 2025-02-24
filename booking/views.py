@@ -4,7 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now, timedelta
 from django.utils.dateparse import parse_date
 from booking.models import Place, Booking
-
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 def home_view(request):
     return render(request, "booking/index.html")
@@ -13,8 +15,10 @@ def get_bookings_view(request, place_id):
     bookings = Booking.objects.filter(place_id=place_id).values("start_time", "end_time")
     return JsonResponse({"bookings": list(bookings)})
 
+
 def place_page_view(request):
     places = Place.objects.filter(is_available=True)
+
     capacity = request.GET.get('capacity')
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
@@ -37,6 +41,8 @@ def book_place_view(request, place_id):
 
     start_date = parse_date(request.POST.get("start_date"))
     end_date = parse_date(request.POST.get("end_date"))
+    username = request.POST.get("username")
+    email = request.POST.get("email")
 
     if not start_date or not end_date or start_date >= end_date:
         return JsonResponse({'error': 'Невірні дати бронювання'}, status=400)
@@ -44,7 +50,19 @@ def book_place_view(request, place_id):
     if Booking.objects.filter(place=place, start_time__lt=end_date, end_time__gt=start_date).exists():
         return JsonResponse({'error': 'Дати вже зайняті'}, status=400)
 
-    Booking.objects.create(user=request.user, place=place, start_time=start_date, end_time=end_date)
+    if not username or not email:
+        return JsonResponse({'error': 'Ім\'я користувача та Gmail є обов\'язковими'}, status=400)
+    try:
+        validate_email(email)
+    except ValidationError:
+        return JsonResponse({'error': 'Неправильний формат Gmail'}, status=400)
+
+    Booking.objects.create(
+        user=request.user,
+        place=place,
+        start_time=start_date,
+        end_time=end_date,
+    )
 
     return JsonResponse({'success': True})
 
@@ -53,3 +71,14 @@ def book_place_view(request, place_id):
 def user_profile_view(request):
     bookings = Booking.objects.filter(user=request.user)
     return render(request, 'booking/user_profile.html', {'bookings': bookings})
+
+@login_required
+def delete_booking_view(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+
+    booking.place.is_available = True
+    booking.place.save()
+
+    booking.delete()
+    
+    return JsonResponse({"success": True})

@@ -29,4 +29,5 @@ urlpatterns = [
     path('book/<int:place_id>/', views.book_place_view, name="book_place"),
     path('profile/', views.user_profile_view, name="user_profile"),
     path("api/bookings/<int:place_id>/", views.get_bookings_view, name="get_bookings"),
+    path("delete-booking/<int:booking_id>/", views.delete_booking_view, name="delete_booking"),
 ]
