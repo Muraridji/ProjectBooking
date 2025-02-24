@@ -16,21 +16,41 @@ def get_bookings_view(request, place_id):
     return JsonResponse({"bookings": list(bookings)})
 
 
-def place_page_view(request):
-    places = Place.objects.filter(is_available=True)
+from django.db.models import Q
+from django.utils.dateparse import parse_date
 
-    capacity = request.GET.get('capacity')
+def place_page_view(request):
+    places = Place.objects.all()
+
+    # Get filter values
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
+    min_capacity = request.GET.get('min_capacity')
 
-    if capacity:
-        places = places.filter(capacity__gte=int(capacity))
+    # Get date filters safely
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+    start_date = parse_date(start_date_str) if start_date_str else None
+    end_date = parse_date(end_date_str) if end_date_str else None
+
+    # Apply basic filters
     if min_price:
-        places = places.filter(price__gte=int(min_price))
+        places = places.filter(price__gte=min_price)
     if max_price:
-        places = places.filter(price__lte=int(max_price))
+        places = places.filter(price__lte=max_price)
+    if min_capacity:
+        places = places.filter(capacity__gte=min_capacity)
+
+    # Apply availability filter
+    if start_date and end_date and start_date < end_date:
+        booked_places = Booking.objects.filter(
+            Q(start_time__lt=end_date, end_time__gt=start_date)
+        ).values_list('place_id', flat=True)
+
+        places = places.exclude(id__in=booked_places)
 
     return render(request, 'booking/place_page.html', {'places': places})
+
 
 @login_required
 def book_place_view(request, place_id):
