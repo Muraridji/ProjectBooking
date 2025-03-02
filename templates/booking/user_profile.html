@@ -1,45 +1,56 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профіль користувача</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <h1>Профіль користувача</h1>
-    <p><strong>Ім'я:</strong> {{ user.username }}</p>
+{% extends 'base/_base.html' %}
+{% load crispy_forms_tags %}
 
-    <h2>Орендовані місця</h2>
-    <ul>
-        {% for booking in bookings %}
-            <li>
-                <h2>{{ booking.place.title }}</h2>
-                <p><strong>Опис:</strong> {{ booking.place.body }}</p>
-                <p><strong>Ціна:</strong> {{ booking.place.price }} грн</p>
-                <p><strong>Ємність:</strong> {{ booking.place.capacity }} осіб</p>
-                <p><strong>Орендовано з:</strong> {{ booking.start_time|date:"d.m.Y H:i" }}</p>
-                <p><strong>До:</strong> {{ booking.end_time|date:"d.m.Y H:i" }}</p>
-                
+{% block tittle %}
+    Login page
+{% endblock %}
 
-                <button class="cancel-booking" data-booking-id="{{ booking.id }}">Скасувати бронювання</button>
-            </li>
-        {% empty %}
-            <li>У вас немає орендованих місць.</li>
-        {% endfor %}
-    </ul>
+{% block content %}
 
-    <a href="{% url 'places' %}">
-        <button>Перейти до списку місць</button>
-    </a>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow p-4">
+            <h1 class="text-center">Профіль користувача</h1>
+            <p class="text-center"><strong>Ім'я:</strong> {{ user.username }}</p>
+        </div>
+
+        <div class="mt-4">
+            <h2 class="text-center">Орендовані місця</h2>
+            {% if bookings %}
+                <div class="row">
+                    {% for booking in bookings %}
+                        <div class="col-md-6">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ booking.place.title }}</h5>
+                                    <p class="card-text"><strong>Опис:</strong> {{ booking.place.body }}</p>
+                                    <p><strong>Ціна:</strong> {{ booking.place.price }} грн</p>
+                                    <p><strong>Ємність:</strong> {{ booking.place.capacity }} осіб</p>
+                                    <p><strong>Орендовано з:</strong> {{ booking.start_time|date:"d.m.Y H:i" }}</p>
+                                    <p><strong>До:</strong> {{ booking.end_time|date:"d.m.Y H:i" }}</p>
+                                    <button class="btn btn-danger cancel-booking" data-booking-id="{{ booking.id }}">Скасувати бронювання</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center text-muted">У вас немає орендованих місць.</p>
+            {% endif %}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'places' %}" class="btn btn-primary">Перейти до списку місць</a>
+        </div>
+    </div>
 
     <script>
         $(document).ready(function() {
             $(".cancel-booking").click(function() {
                 if (!confirm("Ви впевнені, що хочете скасувати бронювання?")) return;
-                
+
                 var bookingId = $(this).data("booking-id");
-                
+
                 $.ajax({
                     url: "{% url 'delete_booking' 0 %}".replace("0", bookingId),
                     type: "POST",
@@ -57,5 +68,7 @@
             });
         });
     </script>
+
 </body>
-</html>
+
+{% endblock %}
