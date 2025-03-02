@@ -23,9 +23,8 @@ def place_page_view(request):
     places = Place.objects.all()
 
     # Get filter values
-    min_price = request.GET.get('min_price')
-    max_price = request.GET.get('max_price')
-    min_capacity = request.GET.get('min_capacity')
+    price = request.GET.get('price')
+    capacity = request.GET.get('capacity')
 
     # Get date filters safely
     start_date_str = request.GET.get('start_date')
@@ -33,15 +32,11 @@ def place_page_view(request):
     start_date = parse_date(start_date_str) if start_date_str else None
     end_date = parse_date(end_date_str) if end_date_str else None
 
-    # Apply basic filters
-    if min_price:
-        places = places.filter(price__gte=min_price)
-    if max_price:
-        places = places.filter(price__lte=max_price)
-    if min_capacity:
-        places = places.filter(capacity__gte=min_capacity)
+    if price:
+        places = places.filter(price__lte=price)
+    if capacity:
+        places = places.filter(capacity__gte=capacity)
 
-    # Apply availability filter
     if start_date and end_date and start_date < end_date:
         booked_places = Booking.objects.filter(
             Q(start_time__lt=end_date, end_time__gt=start_date)
