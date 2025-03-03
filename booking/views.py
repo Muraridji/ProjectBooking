@@ -8,8 +8,20 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 
+from django.views.generic import ListView, TemplateView
+
 def home_view(request):
     return render(request, "booking/index.html")
+
+'''
+class HomePageView(TemplateView):
+    template_name = "index.html"
+
+    def context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context[]
+'''
+
 
 def get_bookings_view(request, place_id):
     bookings = Booking.objects.filter(place_id=place_id).values("start_time", "end_time")
@@ -19,32 +31,41 @@ def get_bookings_view(request, place_id):
 from django.db.models import Q
 from django.utils.dateparse import parse_date
 
-def place_page_view(request):
-    places = Place.objects.all()
 
-    # Get filter values
-    price = request.GET.get('price')
-    capacity = request.GET.get('capacity')
+class PlacePageView(ListView):
+    model = Place
+    template_name = "booking/place_page.html"
+    context_object_name = "places"
+    ordering = ['-price']
 
-    # Get date filters safely
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
-    start_date = parse_date(start_date_str) if start_date_str else None
-    end_date = parse_date(end_date_str) if end_date_str else None
 
-    if price:
-        places = places.filter(price__lte=price)
-    if capacity:
-        places = places.filter(capacity__gte=capacity)
+    def get_queryset(self):
+        queryset = Place.objects.all()
 
-    if start_date and end_date and start_date < end_date:
-        booked_places = Booking.objects.filter(
-            Q(start_time__lt=end_date, end_time__gt=start_date)
-        ).values_list('place_id', flat=True)
+        # Get filter values
+        price = self.request.GET.get('price')
+        capacity = self.request.GET.get('capacity')
 
-        places = places.exclude(id__in=booked_places)
+        # Get date filters safely
+        start_date_str = self.request.GET.get('start_date')
+        end_date_str = self.request.GET.get('end_date')
+        start_date = parse_date(start_date_str) if start_date_str else None
+        end_date = parse_date(end_date_str) if end_date_str else None
 
-    return render(request, 'booking/place_page.html', {'places': places})
+        if price:
+            queryset = queryset.filter(price__lte=price)
+        if capacity:
+            queryset = queryset.filter(capacity__gte=capacity)
+
+        if start_date and end_date and start_date < end_date:
+            booked_places = Booking.objects.filter(
+                Q(start_time__lt=end_date, end_time__gt=start_date)
+            ).values_list('place_id', flat=True)
+
+            queryset = queryset.exclude(id__in=booked_places)
+
+
+        return queryset
 
 
 @login_required
