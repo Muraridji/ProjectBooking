@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import CASCADE
 from django import forms
+import uuid
+from django.contrib.auth.models import User
 
 
 User = get_user_model()
@@ -30,9 +32,11 @@ class Booking(models.Model):
     end_time = models.DateTimeField()
     user = models.ForeignKey(User, related_name="bookings", on_delete=CASCADE)
     place = models.ForeignKey(Place, related_name="bookings", on_delete=CASCADE)
+    is_confirmed = models.BooleanField(default=False)  # Поле для підтвердження бронювання
+    confirmation_token = models.UUIDField(default=uuid.uuid4)  # Токен для підтвердження бронювання
 
     def __str__(self):
-        return f"Booking for {self.place.title} by {self.user}"
+        return f"Booking by {self.user.username} at {self.place.title} from {self.start_time} to {self.end_time}"
 
     class Meta:
         verbose_name = "Booking"
