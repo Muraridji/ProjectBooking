@@ -1,15 +1,129 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Головна сторінка</title>
-</head>
-<body>
-    <h1>Ласкаво просимо!</h1>
-    <p>Перегляньте доступні місця, натиснувши кнопку нижче:</p>
-    <a href="{% url 'places' %}">
-        <button>Перейти до списку місць</button>
-    </a>
-</body>
-</html>
+{% extends 'base/_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block tittle %}
+    Login page
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="mb-4">Ласкаво просимо на наш сайт!</h1>
+            <h2 class="mb-3">
+                Тут ви можете забронювати цікаве місце для себе та своїх друзів.
+            </h2>
+            <h3 class="mb-3">
+                Щоб зробити це, просто
+                <a href="{% url 'places' %}" class="custom-link">
+                    🔗 Перейти до бронювання
+                </a>
+                та забронюйте його.
+            </h3>
+            <br>
+            <h4 class="mb-3">
+                <u>Для бронювання місця, вам потрібно бути зареєстрованим на нашому сайті.</u>
+            </h4>
+            <h4 class="mb-3">
+                Ви можете зробити це, натиснувши на кнопку
+                <span class="fw-bold">"Accounts"</span> у верхньому правому куті та обравши варіант
+                <span class="text-primary fw-bold highlight-text" id="signup">"Sign up"</span>, якщо ви не зареєстровані.
+                Якщо ж у вас є аккаунт, обирайте
+                <span class="text-warning fw-bold highlight-text" id="login">"Log in"</span> та входiть в нього.
+            </h4>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-link {
+        font-weight: bold;
+        color: #198754; /* Темно-зелёный */
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .custom-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 100%;
+        height: 2px;
+        background-color: #198754;
+        transform: scaleX(0);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .custom-link:hover {
+        color: #28a745; /* Ярко-зелёный */
+        transform: scale(1.05);
+    }
+
+    .custom-link:hover::after {
+        transform: scaleX(1);
+    }
+</style>
+
+
+
+<style>
+    .highlight-text {
+        transition: color 0.3s ease, transform 0.2s ease;
+        cursor: pointer;
+    }
+
+    /* При наведении на один, оба становятся ярче */
+    .highlight-text:hover,
+    .highlight-text.hover-effect {
+        filter: brightness(1.5); /* Увеличивает яркость на 50% */
+        transform: scale(1.05); /* Немного увеличивает размер */
+    }
+</style>
+
+<style>
+    .text-primary,
+    .text-warning {
+        transition: color 0.3s ease, text-decoration 0.3s ease;
+    }
+
+    .text-primary:hover,
+    .text-warning:hover,
+    .text-primary:hover ~ .text-warning,
+    .text-warning:hover ~ .text-primary {
+        color: #0057b7; /* Синий */
+        text-decoration: underline;
+    }
+
+    .text-warning:hover,
+    .text-primary:hover ~ .text-warning {
+        color: #ffd700; /* Желтый */
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const signUp = document.getElementById("signup");
+        const logIn = document.getElementById("login");
+
+        function addEffect() {
+            signUp.classList.add("hover-effect");
+            logIn.classList.add("hover-effect");
+        }
+
+        function removeEffect() {
+            signUp.classList.remove("hover-effect");
+            logIn.classList.remove("hover-effect");
+        }
+
+        signUp.addEventListener("mouseenter", addEffect);
+        signUp.addEventListener("mouseleave", removeEffect);
+        logIn.addEventListener("mouseenter", addEffect);
+        logIn.addEventListener("mouseleave", removeEffect);
+    });
+</script>
+
+{% endblock %}

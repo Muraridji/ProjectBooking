@@ -1,78 +1,110 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Список місць</title>
+{% extends 'base/_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block tittle %}
+    Login page
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 50%;
+    }
+    .close {
+        float: right;
+        font-size: 24px;
+        cursor: pointer;
+    }
+</style>
+<body>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 50%;
-        }
-        .close {
-            float: right;
-            font-size: 24px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <form method="GET" action="">
-        <label for="min_price">Мінімальна ціна:</label>
-        <input type="number" id="min_price" name="min_price" min="0" value="{{ request.GET.min_price }}">
 
-        <label for="max_price">Максимальна ціна:</label>
-        <input type="number" id="max_price" name="max_price" min="0" value="{{ request.GET.max_price }}">
+    <!-- Кнопка для открытия модального окна -->
+    <button class="btn btn-outline-info mb-3" id="open-info-modal">ℹ Інформація про фільтри</button>
 
-        <label for="min_capacity">Мінімальна ємність:</label>
-        <input type="number" id="min_capacity" name="min_capacity" min="1" value="{{ request.GET.min_capacity }}">
+    <div class="container mt-4">
+        <!-- Форма фильтрации -->
+        <form id="filter-form" method="get" class="mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="capacity" class="form-label">Мінімальна ємність:</label>
+                    <input type="number" id="capacity" name="capacity" class="form-control bg-primary" min="1" value="{{ request.GET.capacity|default:'' }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="price" class="form-label">Максимальна ціна:</label>
+                    <input type="number" id="price" name="price" class="form-control" min="0" value="{{ request.GET.price|default:'' }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="start_date" class="form-label">Вiд:</label>
+                    <input type="date" id="start_date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="end_date" class="form-label">До:</label>
+                    <input type="date" id="end_date" name="end_date" class="form-control" value="{{ request.GET.end_date }}">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-warning w-100">Фільтрувати</button>
+                </div>
+            </div>
+        </form>
 
-        <label for="start_date">Дата початку:</label>
-        <input type="date" id="start_date" name="start_date" value="{{ request.GET.start_date }}">
+        <!-- Карточки мест -->
+        <div class="row">
+            {% for place in places %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ place.title }}</h5>
+                        <p class="card-text"><strong>Опис:</strong> {{ place.body }}</p>
+                        <p class="card-text"><strong>Ціна:<span class="text-success">{{ place.price }} грн</span></p></strong>
+                        <p class="card-text"><strong>Ємність:</strong> До <strong class="text-danger">{{ place.capacity }}</strong> осіб</p>
+                        </p>
+                        <button class="btn btn-outline-primary open-modal" data-place-id="{{ place.id }}">Зняти</button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center">Немає доступних місць.</p>
+            {% endfor %}
+        </div>
 
-        <label for="end_date">Дата завершення:</label>
-        <input type="date" id="end_date" name="end_date" value="{{ request.GET.end_date }}">
+        <!-- Кнопка "Мій профіль" -->
+        <div class="text-center mt-4">
+            <a href="{% url 'user_profile' %}" class="btn btn-outline-warning">Перейти до профіля</a>
+        </div>
+    </div>
 
-        <button type="submit">Фільтрувати</button>
-    </form>
+    <!-- Модальное окно с информацией -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Інформація про фільтри</h2>
+            <p><strong>Мінімальна ємність:</strong> Введіть число, щоб показати місця з заданою або більшою місткістю.</p>
+            <p><strong>Максимальна ціна:</strong> Вкажіть максимальну суму, яку ви готові заплатити.</p>
+            <p><strong>Від - До:</strong> Виберіть часовий діапазон, у якому шукаєте доступні місця.</p>
+        </div>
+    </div>
 
-    <ul>
-        {% for place in places %}
-            <li>
-                <h2>{{ place.title }}</h2>
-                <p><strong>Опис:</strong> {{ place.body }}</p>
-                <p><strong>Ціна:</strong> {{ place.price }} грн</p>
-                <p><strong>Ємність:</strong> {{ place.capacity }} осіб</p>
-                <p><strong>Доступність:</strong> {% if place.is_available %}Доступно{% else %}Немає в наявності{% endif %}</p>
-
-                <button class="open-modal" data-place-id="{{ place.id }}">Зняти</button>
-            </li>
-        {% empty %}
-            <li>Немає доступних місць.</li>
-        {% endfor %}
-    </ul>
-
-    <a href="{% url 'user_profile' %}">
-        <button>Мій профіль</button>
-    </a>
-
+    <!-- Модальное окно -->
     <div id="booking-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -81,20 +113,20 @@
             <form id="booking-form">
                 {% csrf_token %}
                 <input type="hidden" id="place_id" name="place_id">
-
                 <label for="username">Ім'я користувача:</label>
-                <input type="text" id="username" name="username" value="{{ user.username }}" required>
+                <input type="text" id="username" name="username" class="form-control" required>
 
-                <label for="email">Електронна пошта:</label>
-                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                <label for="email">Gmail:</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+
 
                 <label for="start_date">Дата початку:</label>
-                <input type="date" id="start_date" name="start_date" required>
+                <input type="date" id="start_date" name="start_date" class="form-control" required>
 
                 <label for="end_date">Дата завершення:</label>
-                <input type="date" id="end_date" name="end_date" required>
+                <input type="date" id="end_date" name="end_date" class="form-control" required>
 
-                <button type="submit">Підтвердити бронювання</button>
+                <button type="submit" class="btn btn-success mt-3">Підтвердити бронювання</button>
             </form>
         </div>
     </div>
@@ -153,6 +185,28 @@
                 });
             });
         });
+
+
+        $(document).ready(function() {
+            var infoModal = $("#info-modal");
+            var closeInfoBtn = $("#info-modal .close");
+
+            $("#open-info-modal").click(function() {
+                infoModal.show();
+            });
+
+            closeInfoBtn.click(function() {
+                infoModal.hide();
+            });
+
+            $(window).click(function(event) {
+                if (event.target == infoModal[0]) {
+                    infoModal.hide();
+                }
+            });
+        });
     </script>
+
 </body>
-</html>
+
+{% endblock %}
