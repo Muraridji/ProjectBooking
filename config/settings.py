@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'accounts',
     "crispy_forms",
     "crispy_bootstrap5",
-    "booking",
 ]
 
 MIDDLEWARE = [
@@ -133,9 +132,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Або інший поштовий сервер
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your_email@gmail.com'
-EMAIL_HOST_PASSWORD = 'your_password'  # Краще використовувати змінні оточення
+EMAIL_HOST_USER = 'mishamatlovych25@gmail.com'
+EMAIL_HOST_PASSWORD = 'ocaj qedp sgbr iltr'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

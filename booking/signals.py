@@ -6,14 +6,14 @@ from .models import Booking
 
 @receiver(post_save, sender=Booking)
 def send_booking_confirmation_email(sender, instance, created, **kwargs):
-    if created:  # Виконується тільки при створенні бронювання
+    if created:
         subject = "Підтвердження бронювання"
         message = (
             f"Привіт, {instance.user.first_name}!\n\n"
             f"Ви успішно забронювали місце: {instance.place.title}\n"
-            f"📅 Дата: {instance.date}\n"
+            f"📅 Дата: {instance.start_time}\n"
             f"💰 Ціна: {instance.place.price} грн\n"
-            f"📍 Локація: {instance.place.location}\n\n"
+            f"📍 Локація: {instance.place}\n\n"
             f"Дякуємо за ваше бронювання!"
         )
         send_mail(
