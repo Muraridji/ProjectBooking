@@ -21,12 +21,8 @@ def get_bookings_view(request, place_id):
     return JsonResponse({"bookings": list(bookings)})
 
 
-from django.db.models import Q
-from django.utils.dateparse import parse_date
-
-
 def place_page_view(request):
-    places = Place.objects.all()
+    places = Place.objects.filter(is_available=True)
 
     # Get filter values
     price = request.GET.get('price')
@@ -65,13 +61,17 @@ def confirm_booking(request, token):
 
 @login_required
 def book_place_view(request, place_id):
+
     place = get_object_or_404(Place, id=place_id)
 
     if not place.is_available:
         return JsonResponse({'error': 'Місце недоступне'}, status=400)
 
+
     start_date = parse_date(request.POST.get("start_date"))
+
     end_date = parse_date(request.POST.get("end_date"))
+
     username = request.POST.get("username")
     email = request.POST.get("email")
 
