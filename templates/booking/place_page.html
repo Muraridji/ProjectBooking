@@ -38,6 +38,15 @@
         font-size: 24px;
         cursor: pointer;
     }
+    .card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    
 </style>
 <body>
 
@@ -51,20 +60,20 @@
         <form id="filter-form" method="get" class="mb-4">
             <div class="d-flex gap-3 align-items-start flex-wrap">
                 <div class="d-flex flex-column">
-                    <label for="{{ filter_form.capacity.id_for_label }}">Capacity</label>
+                    <label for="{{ filter_form.capacity.id_for_label }}">Мінімальна ємність</label>
                     {{ filter_form.capacity }}
                     <button type="submit" class="btn btn-warning w-100 mt-2">Фільтрувати</button>
                 </div>
                 <div class="d-flex flex-column">
-                    <label for="{{ filter_form.price.id_for_label }}">Price</label>
+                    <label for="{{ filter_form.price.id_for_label }}">Максимальна ціна</label>
                     {{ filter_form.price }}
                 </div>
                 <div class="d-flex flex-column">
-                    <label for="{{ filter_form.start_time.id_for_label }}">Start Time</label>
+                    <label for="{{ filter_form.start_time.id_for_label }}">Від</label>
                     {{ filter_form.start_time }}
                 </div>
                 <div class="d-flex flex-column">
-                    <label for="{{ filter_form.end_time.id_for_label }}">End Time</label>
+                    <label for="{{ filter_form.end_time.id_for_label }}">До</label>
                     {{ filter_form.end_time }}
                 </div>
             </div>
@@ -74,10 +83,15 @@
             {% for place in places %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
+                    {% if place.image_url %}
+                    <img src="{{ place.image_url|default:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTn49hHMZ8jFOz6D5oL6iRRiE0Khz3qqYVLTw&s' }}" 
+                    class="card-img-top" 
+                    alt="{{ place.title }}">
+                    {% endif %}
                     <div class="card-body">
                         <h5 class="card-title">{{ place.title }}</h5>
                         <p class="card-text"><strong>Опис:</strong> {{ place.body }}</p>
-                        <p class="card-text"><strong>Ціна:<span class="text-success">{{ place.price }} грн</span></p></strong>
+                        <p class="card-text"><strong>Ціна:<span class="text-success"> {{ place.price }} грн</span></p></strong>
                         <p class="card-text"><strong>Ємність:</strong> До <strong class="text-danger">{{ place.capacity }}</strong> осіб</p>
                         </p>
                         <button class="btn btn-outline-primary open-modal" data-place-id="{{ place.id }}">Зняти</button>
@@ -122,28 +136,28 @@
         $(document).ready(function() {
             var modal = $("#booking-modal");
             var closeBtn = $(".close");
+            var calendarEl = $("#calendar");
 
             $(".open-modal").on("click", function() {
                 var placeId = $(this).data("place-id");
                 $("#place_id").val(placeId);
                 loadCalendar(placeId);
-                modal.show();
+                modal.fadeIn();  // Smooth fade-in animation
             });
 
             closeBtn.on("click", function() {
-                modal.hide();
+                modal.fadeOut();  // Smooth fade-out animation
             });
 
             $(window).on("click", function(event) {
                 if (event.target == modal[0]) {
-                    modal.hide();
+                    modal.fadeOut();  // Smooth fade-out animation
                 }
             });
 
             function loadCalendar(placeId) {
                 $.get(`/api/bookings/${placeId}/`, function(data) {
-                    var calendarEl = document.getElementById("calendar");
-                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                    var calendar = new FullCalendar.Calendar(calendarEl[0], {
                         initialView: "dayGridMonth",
                         events: data.bookings.map(booking => ({
                             title: "Заброньовано",
@@ -158,31 +172,28 @@
             $("#booking-form").on("submit", function(event) {
                 event.preventDefault();
                 var formData = $(this).serialize();
+                var submitButton = $(this).find("button[type='submit']");
+
+                submitButton.prop("disabled", true).html("⏳ Завантаження...");
 
                 $.post("{% url 'book_place' 0 %}".replace("0", $("#place_id").val()), formData, function(response) {
                     if (response.success) {
                         alert(response.message);
-                        modal.hide();
+                        $("#booking-modal").fadeOut();  // Smooth fade-out animation
                         location.reload();
                     } else {
                         alert(response.error);
                     }
-                }).fail(function(jqXHR, textStatus, errorThrown) {
+                }).fail(function(jqXHR) {
+                    var errorMessage = "Невідома помилка. Спробуйте ще раз пізніше.";
                     if (jqXHR.responseJSON) {
-                        if (jqXHR.responseJSON.message) {
-                            alert(jqXHR.responseJSON.message);
-                        } else if (jqXHR.responseJSON.error) {
-                            alert("Помилка: " + jqXHR.responseJSON.error);
-                        } else {
-                            alert("Невiдома помилка. Спробуйте ще раз пiзнiше.");
-                        }
-                    } else {
-                        alert("Невiдома помилка. Спробуйте ще раз пiзнiше.");
+                        errorMessage = jqXHR.responseJSON.message || jqXHR.responseJSON.error || errorMessage;
                     }
+                    alert("Помилка: " + errorMessage);
+                }).always(function() {
+                    submitButton.prop("disabled", false).html("Підтвердити бронювання");
                 });
             });
-
-
         });
 
         $(document).ready(function() {

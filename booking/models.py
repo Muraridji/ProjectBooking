@@ -18,6 +18,7 @@ class Place(models.Model):
     price = models.IntegerField()
     capacity = models.IntegerField()
     is_available = models.BooleanField(default=True)
+    image_url = models.URLField(max_length=500)
 
     def __str__(self):
         return f"Place {self.title}"
