@@ -32,8 +32,8 @@ class Booking(models.Model):
     end_time = models.DateTimeField()
     user = models.ForeignKey(User, related_name="bookings", on_delete=CASCADE)
     place = models.ForeignKey(Place, related_name="bookings", on_delete=CASCADE)
-    is_confirmed = models.BooleanField(default=False)  # Поле для підтвердження бронювання
-    confirmation_token = models.UUIDField(default=uuid.uuid4)  # Токен для підтвердження бронювання
+    is_confirmed = models.BooleanField(default=False)
+    confirmation_token = models.UUIDField(default=uuid.uuid4)
 
     def __str__(self):
         return f"Booking by {self.user.username} at {self.place.title} from {self.start_time} to {self.end_time}"
