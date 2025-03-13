@@ -1,21 +1,44 @@
 {% extends 'base/_base.html' %}
 {% load crispy_forms_tags %}
 
-{% block tittle %}
-    Login page
+{% block title %}
+    Login Page
 {% endblock %}
 
 {% block content %}
-
-<h1 class="text-center">Login page</h1>
-<form method="POST">
-    {% csrf_token %}
-    <div class="row justify-content-center">
-        <div class="col-3">
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-success btn-lg">Login</button>
-        </div>
+<div class="d-flex justify-content-center align-items-center vh-100 text-light">
+    <div class="neon-border p-4 rounded" style="max-width: 400px; width: 100%;">
+        <h1 class="text-center glowing-text">Login</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form|crispy }}
+            </div>
+            <button type="submit" class="btn btn-neon w-100">Login</button>
+        </form>
     </div>
-</form>
+</div>
 
+<style>
+    .btn-neon {
+        background: #00eaff;
+        color: #000;
+        font-weight: bold;
+        text-transform: uppercase;
+        border: none;
+        padding: 10px;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 0 10px #00eaff;
+    }
+
+    .btn-neon:hover {
+        background: #fff;
+        color: #00eaff;
+        box-shadow: 0 0 20px #00eaff;
+    }
+
+    .vh-100 {
+        height: 100vh;
+    }
+</style>
 {% endblock %}

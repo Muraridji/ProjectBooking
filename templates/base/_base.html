@@ -12,6 +12,91 @@
 
     {% endblock %}
   </title>
+  <style>
+    body {
+        background: url('https://i.seadn.io/gae/Yuho0kQ154w8dl4TQjqhgeQ4zkJOJuCUctv7A4Opi8HBH8-FeQG49CRwBjMOTZu9M7IodvjIRAvzbxW5eiT-Saem9yst5lzwJ-YN-A?auto=format&dpr=1&w=1000') no-repeat center center fixed;
+        background-size: cover;
+    }
+
+
+    .neon-text {
+        color: #fff;
+        text-shadow: 0 0 5px #00eaff, 0 0 10px #00eaff, 0 0 15px #00eaff;
+    }
+
+    @keyframes rainbowGlow {
+        0%   { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+        20%  { border-color: #ff7300; box-shadow: 0 0 10px #ff7300; }
+        40%  { border-color: #fffb00; box-shadow: 0 0 10px #fffb00; }
+        60%  { border-color: #48ff00; box-shadow: 0 0 10px #48ff00; }
+        80%  { border-color: #00eaff; box-shadow: 0 0 10px #00eaff; }
+        90%  { border-color: #ff00ff; box-shadow: 0 0 10px #ff00ff; }
+        100% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+    }
+
+    .neon-border {
+        border: 2px solid #00eaff;
+        box-shadow: 0 0 10px #00eaff;
+        padding: 20px;
+        border-radius: 10px;
+        animation: rainbowGlow 3s infinite linear;
+    }
+
+    @keyframes rainbowGlowText {
+        0%   { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+        20%  { text-shadow: 0 0 10px #ff7300, 0 0 20px #ff7300; }
+        40%  { text-shadow: 0 0 10px #fffb00, 0 0 20px #fffb00; }
+        60%  { text-shadow: 0 0 10px #48ff00, 0 0 20px #48ff00; }
+        80%  { text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff; }
+        100% { text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+    }
+
+    .rainbow-text {
+        font-size: 2em;
+        font-weight: bold;
+        color: white; /* или любой цвет текста */
+        animation: rainbowGlowText 3s infinite linear;
+    }
+
+
+
+    .custom-link {
+        font-weight: bold;
+        color: #00eaff;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .custom-link:hover {
+        color: #fff;
+        text-shadow: 0 0 10px #00eaff;
+    }
+
+    .text-outline {
+            text-shadow:
+                -1px -1px 2px #9400D3,
+                 1px -1px 2px #9400D3,
+                -1px  1px 2px #9400D3,
+                 1px  1px 2px #9400D3;
+        }
+
+    @keyframes glowText {
+        0% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff; }
+        50% { text-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff, 0 0 45px #ff00ff; }
+        100% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff; }
+    }
+
+    .glowing-text {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: white;
+        animation: glowText 3s infinite alternate ease-in-out;
+    }
+
+  </style>
+
+
 </head>
 <body>
 {% include 'base/_header.html' %}
