@@ -17,7 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from booking import views
-from booking.views import confirm_booking
 
 app_name = "booking"
 
@@ -25,11 +24,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls', namespace="accounts")),
 
-    path('', views.home_view, name="home"),
+    path('', views.HomeView.as_view(), name="home"),
     path('place_page/', views.PlacePageView.as_view(), name="places"),
-    path('book/<int:place_id>/', views.book_place_view, name="book_place"),
-    path('profile/', views.user_profile_view, name="user_profile"),
-    path("api/bookings/<int:place_id>/", views.get_bookings_view, name="get_bookings"),
-    path("delete-booking/<int:booking_id>/", views.delete_booking_view, name="delete_booking"),
-    path('confirm-booking/<str:token>/', confirm_booking, name='confirm_booking'),
+    path('book/<int:place_id>/', views.BookPlaceView.as_view(), name="book_place"),
+    path('profile/', views.UserProfileView.as_view(), name="user_profile"),
+    path("api/bookings/<int:place_id>/", views.GetBookingsView.as_view(), name="get_bookings"),
+    path("delete-booking/<int:booking_id>/", views.DeleteBookingView.as_view(), name="delete_booking"),
+    path('confirm-booking/<str:token>/', views.ConfirmBookingView.as_view(), name='confirm_booking'),
 ]
