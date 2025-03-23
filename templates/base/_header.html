@@ -3,6 +3,18 @@
     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
       <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
         <li><a href="{% url 'home' %}" class="nav-link px-2 text-white fs-5">Home</a></li>
+      <!-- Добавляем отступы между кнопками и справа от них -->
+      <div class="d-flex align-items-center ms-3">
+            <button class="btn btn-outline-light me-3" onclick="togglePlay()">
+                <i class="fas fa-play"></i> / <i class="fas fa-pause"></i>
+            </button>
+            <button class="btn btn-outline-light me-3" onclick="decreaseVolume()">
+                <i class="fas fa-volume-down"></i>
+            </button>
+            <button class="btn btn-outline-light me-3" onclick="increaseVolume()">
+                <i class="fas fa-volume-up"></i>
+            </button>
+      </div>
       </ul>
       <div class="text-end">
         {% if user.is_authenticated %}

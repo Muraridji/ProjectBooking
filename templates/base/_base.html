@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,6 +98,67 @@
 
   </style>
 
+  <audio id="bg-music" loop>
+      <source src="{% static 'audio/background.mp4' %}" type="audio/mpeg">
+      Your browser does not support the audio element.
+  </audio>
+
+  <audio id="hover-sound" src="{% static 'audio/hover.m4a' %}" preload="auto"></audio>
+  <audio id="submit-sound" src="{% static 'audio/submit.m4a' %}" preload="auto"></audio>
+  <audio id="close-sound" src="{% static 'audio/close.m4a' %}" preload="auto"></audio>
+
+
+  <script>
+      const audio = document.getElementById("bg-music");
+
+      function increaseVolume() {
+          if (audio.volume < 1) {
+              audio.volume = Math.min(1, audio.volume + 0.1);
+          }
+      }
+
+      function decreaseVolume() {
+          if (audio.volume > 0) {
+              audio.volume = Math.max(0, audio.volume - 0.1);
+          }
+      }
+
+      function togglePlay() {
+          if (audio.paused) {
+              audio.play();
+          } else {
+              audio.pause();
+          }
+      }
+  </script>
+
+  <script>
+    const hoverSound = document.getElementById('hover-sound');
+    const clickSound = document.getElementById('click-sound');
+    const closeSound = document.getElementById('close-sound');
+
+    // Звук при наведении
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            hoverSound.play(); // Играем звук при наведении
+        });
+    });
+
+    // Звук при нажатии
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            clickSound.play(); // Играем звук при клике
+        });
+    });
+
+    // Звук при закрытии
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            closeSound.play(); // Играем звук при клике
+        });
+    });
+  </script>
 
 </head>
 <body>
@@ -105,8 +168,6 @@
 {% endblock %}
 
 {% include 'base/_footer.html' %}
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
 </body>
 </html>
