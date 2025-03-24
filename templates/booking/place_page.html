@@ -1,20 +1,52 @@
 {% extends 'base/_base.html' %}
 {% load crispy_forms_tags %}
 
-{% block tittle %}
-    Login page
+{% block title %}
+    Login Page
 {% endblock %}
 
 {% block content %}
 
 <style>
+    body {
+        background: url('https://i.seadn.io/gae/Yuho0kQ154w8dl4TQjqhgeQ4zkJOJuCUctv7A4Opi8HBH8-FeQG49CRwBjMOTZu9M7IodvjIRAvzbxW5eiT-Saem9yst5lzwJ-YN-A?auto=format&dpr=1&w=1000') no-repeat center center fixed;
+        background-size: cover;
+    }
+
+    .neon-text {
+        color: #fff;
+        text-shadow: 0 0 5px #00eaff, 0 0 10px #00eaff, 0 0 15px #00eaff;
+    }
+
+    .neon-border {
+        border: 2px solid #00eaff;
+        box-shadow: 0 0 10px #00eaff;
+        padding: 20px;
+        border-radius: 10px;
+        animation: rainbowGlow 3s infinite linear;
+        background-color: #1a1a1a; /* Dark gray */
+    }
+
+    @keyframes rainbowGlow {
+        0%   { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+        20%  { border-color: #ff7300; box-shadow: 0 0 10px #ff7300; }
+        40%  { border-color: #fffb00; box-shadow: 0 0 10px #fffb00; }
+        60%  { border-color: #48ff00; box-shadow: 0 0 10px #48ff00; }
+        80%  { border-color: #00eaff; box-shadow: 0 0 10px #00eaff; }
+        100% { border-color: #ff00ff; box-shadow: 0 0 10px #ff00ff; }
+    }
+
     #filter-form input {
+        background-color: #343a40;
+        color: white;
         width: 312px;
+        border: 2px solid #00eaff;
     }
     #filter-form input[name="capacity"] {
         background-color: #007bff;
         color: white;
     }
+
     .modal {
         display: none;
         position: fixed;
@@ -28,19 +60,25 @@
         align-items: center;
     }
     .modal-content {
-        background-color: white;
+        background-color: #1a1a1a; /* Dark gray */
         padding: 20px;
         border-radius: 10px;
         width: 50%;
+        box-shadow: 0 0 20px #00eaff;
     }
     .close {
         float: right;
         font-size: 24px;
         cursor: pointer;
+        color: white;
     }
+
     .card {
-    color: white;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        color: white;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        border: 2px solid #9c0d84;
+        box-shadow: 0 0 10px #9c0d84;
+        background-color: #1a1a1a; /* Dark gray */
     }
 
     .card:hover {
@@ -48,7 +86,44 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
 
+    #calendar {
+        background-color: #1a1a1a; /* Dark gray */
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 0 10px #00eaff;
+    }
+
+    .fc {
+        font-family: Arial, sans-serif;
+    }
+
+    .fc-toolbar {
+        background-color: #00eaff;
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .fc-daygrid-day {
+        background-color: #2a2a2a;
+        border: 1px solid #00eaff;
+    }
+
+    .fc-daygrid-day:hover {
+        background-color: #004080;
+    }
+
+    .fc-event {
+        background-color: #00eaff !important;
+        border-color: #00bfff !important;
+        color: white !important;
+    }
+
+    .fc-event:hover {
+        background-color: #007acc !important;
+    }
 </style>
+
 <body>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -105,7 +180,7 @@
         </div>
 
         <div class="text-center mt-4">
-            <a href="{% url 'user_profile' %}" class="btn btn-outline-warning">Перейти до профіля</a>
+            <a href="{% url 'booking:user_profile' %}" class="btn btn-outline-warning">Перейти до профіля</a>
         </div>
     </div>
 
@@ -143,27 +218,41 @@
                 var placeId = $(this).data("place-id");
                 $("#place_id").val(placeId);
                 loadCalendar(placeId);
-                modal.fadeIn();  // Smooth fade-in animation
+                modal.fadeIn();
             });
 
             closeBtn.on("click", function() {
-                modal.fadeOut();  // Smooth fade-out animation
+                modal.fadeOut();
             });
 
             $(window).on("click", function(event) {
                 if (event.target == modal[0]) {
-                    modal.fadeOut();  // Smooth fade-out animation
+                    modal.fadeOut();
                 }
             });
 
             function loadCalendar(placeId) {
-                $.get(`/api/bookings/${placeId}/`, function(data) {
-                    var calendar = new FullCalendar.Calendar(calendarEl[0], {
+                $.get(`/booking/api/bookings/${placeId}/`, function(data) {
+                    var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
                         initialView: "dayGridMonth",
+                        selectable: true,
+                        selectMirror: true,
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        },
+                        select: function(info) {
+                            $("#id_start_time").val(info.startStr);
+                            $("#id_end_time").val(info.endStr);
+                        },
                         events: data.bookings.map(booking => ({
                             title: "Заброньовано",
                             start: booking.start_time,
-                            end: booking.end_time
+                            end: booking.end_time,
+                            backgroundColor: "#9932CC",
+                            borderColor: "#800080",
+                            textColor: "white"
                         }))
                     });
                     calendar.render();
@@ -177,10 +266,10 @@
 
                 submitButton.prop("disabled", true).html("⏳ Завантаження...");
 
-                $.post("{% url 'book_place' 0 %}".replace("0", $("#place_id").val()), formData, function(response) {
+                $.post("{% url 'booking:book_place' 0 %}".replace("0", $("#place_id").val()), formData, function(response) {
                     if (response.success) {
                         alert(response.message);
-                        $("#booking-modal").fadeOut();  // Smooth fade-out animation
+                        $("#booking-modal").fadeOut();
                         location.reload();
                     } else {
                         alert(response.error);

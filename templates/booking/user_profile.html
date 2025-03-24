@@ -23,7 +23,7 @@
                 <div class="row">
                     {% for booking in bookings %}
                         <div class="col-md-6">
-                            <div class="card mb-4 shadow-sm neon-border">
+                            <div class="card mb-4 shadow-sm neon-border bg-dark text-white">
                                 <div class="card-body neon-border">
                                     <h5 class="card-title">{{ booking.place.title }}</h5>
                                     <p class="card-text"><strong>Опис:</strong> {{ booking.place.body }}</p>
@@ -43,11 +43,10 @@
         </div>
 
         <div class="text-center mt-4">
-            <a href="{% url 'places' %}" class="btn custom-link glowing-text">Перейти до списку місць</a>
+            <a href="{% url 'booking:places' %}" class="btn custom-link glowing-text">Перейти до списку місць</a>
         </div>
     </div>
 
-    <!-- Модальное окно для отмены бронирования -->
     <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -74,7 +73,7 @@
             $('#cancelModal').modal('show');
             $('#confirmCancelBooking').click(function() {
                 $.ajax({
-                    url: "{% url 'delete_booking' 0 %}".replace("0", bookingId),
+                    url: "{% url 'booking:delete_booking' 0 %}".replace("0", bookingId),
                     type: "POST",
                     data: {
                         csrfmiddlewaretoken: "{{ csrf_token }}"

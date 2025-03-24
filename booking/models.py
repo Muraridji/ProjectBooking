@@ -8,10 +8,6 @@ from django.contrib.auth.models import User
 
 User = get_user_model()
 
-
-class Location(models.Model):
-    pass
-
 class Place(models.Model):
     title = models.CharField(max_length=50)
     body = models.TextField()

@@ -23,12 +23,6 @@ app_name = "booking"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls', namespace="accounts")),
-
+    path('booking/', include('booking.urls', namespace="booking")),
     path('', views.HomeView.as_view(), name="home"),
-    path('place_page/', views.PlacePageView.as_view(), name="places"),
-    path('book/<int:place_id>/', views.BookPlaceView.as_view(), name="book_place"),
-    path('profile/', views.UserProfileView.as_view(), name="user_profile"),
-    path("api/bookings/<int:place_id>/", views.GetBookingsView.as_view(), name="get_bookings"),
-    path("delete-booking/<int:booking_id>/", views.DeleteBookingView.as_view(), name="delete_booking"),
-    path('confirm-booking/<str:token>/', views.ConfirmBookingView.as_view(), name='confirm_booking'),
 ]
