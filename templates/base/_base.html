@@ -104,7 +104,7 @@
   </audio>
 
   <audio id="hover-sound" src="{% static 'audio/hover.mp3' %}" preload="auto"></audio>
-  <audio id="submit-sound" src="{% static 'audio/submit.mp3' %}" preload="auto"></audio>
+  <audio id="click-sound" src="{% static 'audio/click.mp3' %}" preload="auto"></audio>
   <audio id="close-sound" src="{% static 'audio/close.mp3' %}" preload="auto"></audio>
 
 
@@ -133,32 +133,75 @@
   </script>
 
   <script>
+    // Звуковые эффекты
     const hoverSound = document.getElementById('hover-sound');
     const clickSound = document.getElementById('click-sound');
     const closeSound = document.getElementById('close-sound');
 
-    // Звук при наведении
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(button => {
-        button.addEventListener('mouseenter', function() {
-            hoverSound.play(); // Играем звук при наведении
+    // Звук при наведении (с обнулением, чтобы звук не заикался)
+    document.querySelectorAll('.btn').forEach(button => {
+        button.addEventListener('mouseenter', () => {
+            hoverSound.currentTime = 0;
+            hoverSound.play();
         });
     });
 
-    // Звук при нажатии
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            clickSound.play(); // Играем звук при клике
+    // Звук при клике на кнопки с классом 'click-sound'
+    document.querySelectorAll('.click-sound').forEach(button => {
+        button.addEventListener('click', () => {
+            clickSound.currentTime = 0;
+            clickSound.play();
         });
     });
 
-    // Звук при закрытии
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            closeSound.play(); // Играем звук при клике
+    // Звук при клике на кнопки с классом 'close-sound'
+    document.querySelectorAll('.close-sound').forEach(button => {
+        button.addEventListener('click', () => {
+            closeSound.currentTime = 0;
+            closeSound.play();
         });
     });
   </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const bgMusic = document.getElementById("bg-music");
+
+        let isPlaying = localStorage.getItem("musicPlaying") === "true";
+        let lastVolume = localStorage.getItem("musicVolume") || 1;
+        let lastTime = sessionStorage.getItem("musicTime") || 0;
+
+        bgMusic.volume = lastVolume;
+        bgMusic.currentTime = lastTime; // Восстанавливаем позицию
+
+        if (isPlaying) {
+            bgMusic.play().catch(err => console.log("Автовоспроизведение заблокировано:", err));
+        }
+
+        // Сохраняем текущее время музыки перед сменой страницы
+        window.addEventListener("beforeunload", function () {
+            sessionStorage.setItem("musicTime", bgMusic.currentTime);
+        });
+
+        function togglePlay() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                localStorage.setItem("musicPlaying", "true");
+            } else {
+                bgMusic.pause();
+                localStorage.setItem("musicPlaying", "false");
+            }
+        }
+
+        bgMusic.addEventListener("volumechange", function () {
+            localStorage.setItem("musicVolume", bgMusic.volume);
+        });
+
+        window.togglePlay = togglePlay;
+    });
+</script>
+
 
 </head>
 <body>
