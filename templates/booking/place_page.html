@@ -125,12 +125,11 @@
 </style>
 
 <body>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
-    <button class="btn btn-outline-info mb-3" id="open-info-modal">ℹ Інформація про фільтри</button>
+    <button class="btn btn-outline-info mb-3 click-sound" id="open-info-modal">ℹ Інформація про фільтри</button>
 
     <div class="container mt-4 text-light">
         <form id="filter-form" method="get" class="mb-4">
@@ -138,7 +137,7 @@
                 <div class="d-flex flex-column">
                     <label for="{{ filter_form.capacity.id_for_label }}">Мінімальна ємність</label>
                     {{ filter_form.capacity }}
-                    <button type="submit" class="btn btn-warning w-100 mt-2">Фільтрувати</button>
+                    <button type="submit" class="btn btn-warning w-100 mt-2 click-sound">Фільтрувати</button>
                 </div>
                 <div class="d-flex flex-column">
                     <label for="{{ filter_form.price.id_for_label }}">Максимальна ціна</label>
@@ -160,17 +159,14 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100 neon-border bg-dark">
                     {% if place.image_url %}
-                    <img src="{{ place.image_url|default:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTn49hHMZ8jFOz6D5oL6iRRiE0Khz3qqYVLTw&s' }}"
-                    class="card-img-top"
-                    alt="{{ place.title }}">
+                    <img src="{{ place.image_url|default:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTn49hHMZ8jFOz6D5oL6iRRiE0Khz3qqYVLTw&s' }}" class="card-img-top" alt="{{ place.title }}">
                     {% endif %}
                     <div class="card-body">
                         <h5 class="card-title">{{ place.title }}</h5>
                         <p class="card-text"><strong>Опис:</strong> {{ place.body }}</p>
                         <p class="card-text"><strong>Ціна:<span class="text-success"> {{ place.price }} грн</span></p></strong>
                         <p class="card-text"><strong>Ємність:</strong> До <strong class="text-danger">{{ place.capacity }}</strong> осіб</p>
-                        </p>
-                        <button class="btn btn-outline-primary open-modal" data-place-id="{{ place.id }}">Зняти</button>
+                        <button class="btn btn-outline-primary open-modal click-sound" data-place-id="{{ place.id }}">Зняти</button>
                     </div>
                 </div>
             </div>
@@ -203,7 +199,7 @@
                 {% csrf_token %}
                 <input type="hidden" id="place_id" name="place_id">
                 {{ booking_form.as_p }}
-                <button type="submit" class="btn btn-primary w-100">Підтвердити бронювання</button>
+                <button type="submit" class="btn btn-primary w-100 alt-click-sound">Підтвердити бронювання</button>
             </form>            
         </div>
     </div>

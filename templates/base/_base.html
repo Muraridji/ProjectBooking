@@ -104,7 +104,7 @@
   </audio>
 
   <audio id="hover-sound" src="{% static 'audio/hover.mp3' %}" preload="auto"></audio>
-  <audio id="click-sound" src="{% static 'audio/click.mp3' %}" preload="auto"></audio>
+  <audio id="click-sound" src="{% static 'audio/submit.mp3' %}" preload="auto"></audio>
   <audio id="close-sound" src="{% static 'audio/close.mp3' %}" preload="auto"></audio>
 
 
@@ -139,28 +139,26 @@
     const closeSound = document.getElementById('close-sound');
 
     // Звук при наведении (с обнулением, чтобы звук не заикался)
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('mouseenter', () => {
-            hoverSound.currentTime = 0;
-            hoverSound.play();
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                hoverSound.pause();
+                hoverSound.currentTime = 0;
+                hoverSound.play();
+            });
         });
+        document.querySelectorAll('.click-sound').forEach(button => {
+            button.addEventListener('click', () => {
+                clickSound.currentTime = 0;
+                clickSound.play();
+            });
+        });
+       // button.addEventListener('click', () => {
+        //    closeSound.currentTime = 0;
+        //    closeSound.play();
+       // });
     });
 
-    // Звук при клике на кнопки с классом 'click-sound'
-    document.querySelectorAll('.click-sound').forEach(button => {
-        button.addEventListener('click', () => {
-            clickSound.currentTime = 0;
-            clickSound.play();
-        });
-    });
-
-    // Звук при клике на кнопки с классом 'close-sound'
-    document.querySelectorAll('.close-sound').forEach(button => {
-        button.addEventListener('click', () => {
-            closeSound.currentTime = 0;
-            closeSound.play();
-        });
-    });
   </script>
 
 

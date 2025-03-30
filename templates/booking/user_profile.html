@@ -31,7 +31,7 @@
                                     <p><strong>Ємність:</strong> {{ booking.place.capacity }} осіб</p>
                                     <p><strong>Орендовано з:</strong> {{ booking.start_time|date:"d.m.Y" }}</p>
                                     <p><strong>До:</strong> {{ booking.end_time|date:"d.m.Y" }}</p>
-                                    <button class="btn btn-danger cancel-booking" data-booking-id="{{ booking.id }}">Скасувати бронювання</button>
+                                    <button class="btn btn-danger cancel-booking click" data-booking-id="{{ booking.id }}">Скасувати бронювання</button>
                                 </div>
                             </div>
                         </div>
@@ -49,17 +49,17 @@
 
     <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content bg-secondary text-light">
                 <div class="modal-header">
                     <h5 class="modal-title" id="cancelModalLabel">Скасувати бронювання</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close click" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     Ви впевнені, що хочете скасувати це бронювання?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
-                    <button type="button" class="btn btn-danger" id="confirmCancelBooking">Скасувати</button>
+                    <button type="button" class="btn btn-secondary click" data-bs-dismiss="modal">Закрити</button>
+                    <button type="button" class="btn btn-danger click" id="confirmCancelBooking">Скасувати</button>
                 </div>
             </div>
         </div>
@@ -79,7 +79,6 @@
                         csrfmiddlewaretoken: "{{ csrf_token }}"
                     },
                     success: function(response) {
-                        alert("Бронювання скасовано!");
                         location.reload();
                     },
                     error: function() {
