@@ -1,29 +1,26 @@
-# Ignore Python cache files
+# Игнорируем кеш Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Ignore SQLite database file
+# Игнорируем временную БД SQLite
 db.sqlite3
 
-# Ignore Django migration files
-accounts/migrations/
-booking/migrations/
+# Игнорируем кеш миграций, но НЕ сами миграции!
+**/migrations/__pycache__/
 
-# Ignore environment files
+# Игнорируем файлы окружения
 .env
 
-# Ignore other common non-essential files
+# Игнорируем логи и прочие ненужные файлы
 *.log
 *.pot
-*.pyc
-*.db
 
-# Ignore IDE-specific files (example for VSCode, PyCharm)
+# Игнорируем файлы IDE
 .vscode/
 .idea/
 
-# Ignore other system files (e.g., MacOS, Windows)
+# Игнорируем системные файлы
 .DS_Store
 Thumbs.db
