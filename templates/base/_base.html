@@ -103,7 +103,6 @@
       Your browser does not support the audio element.
   </audio>
 
-  <audio id="hover-sound" src="{% static 'audio/hover.mp3' %}" preload="auto"></audio>
   <audio id="click-sound" src="{% static 'audio/submit.mp3' %}" preload="auto"></audio>
   <audio id="close-sound" src="{% static 'audio/close.mp3' %}" preload="auto"></audio>
 
@@ -134,19 +133,14 @@
 
   <script>
     // Звуковые эффекты
-    const hoverSound = document.getElementById('hover-sound');
     const clickSound = document.getElementById('click-sound');
     const closeSound = document.getElementById('close-sound');
 
+    clickSound.volume = 0.1;
+    closeSound.volume = 0.1;
+
     // Звук при наведении (с обнулением, чтобы звук не заикался)
     document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('mouseenter', () => {
-                hoverSound.pause();
-                hoverSound.currentTime = 0;
-                hoverSound.play();
-            });
-        });
         document.querySelectorAll('.click-sound').forEach(button => {
             button.addEventListener('click', () => {
                 clickSound.currentTime = 0;
