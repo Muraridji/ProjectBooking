@@ -153,10 +153,12 @@
                 clickSound.play();
             });
         });
-       // button.addEventListener('click', () => {
-        //    closeSound.currentTime = 0;
-        //    closeSound.play();
-       // });
+        document.querySelectorAll('.alt-click-sound').forEach(button => {
+            button.addEventListener('click', () => {
+                closeSound.currentTime = 0;
+                closeSound.play();
+            });
+        });
     });
 
   </script>

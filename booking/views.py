@@ -116,7 +116,7 @@ class BookPlaceView(View):
                 is_confirmed=False
             )
             
-            confirmation_link = request.build_absolute_uri(reverse('confirm_booking', args=[booking.confirmation_token]))
+            confirmation_link = request.build_absolute_uri(reverse('booking:confirm_booking', args=[booking.confirmation_token]))
             send_mail(
                 'Підтвердження бронювання',
                 f'Привіт, {username}!\n\nЩоб підтвердити бронювання, перейдіть за посиланням:\n{confirmation_link}\n\nДякуємо!',
