@@ -1,20 +1,14 @@
-FROM python:3.12-slim-bullseye
-
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
-
+# Використовуємо офіційний образ Python
+FROM python:3.12
+# Встановлюємо робочу директорію у контейнері
 WORKDIR /app
-
-RUN apt-get update && apt-get install -y \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt /app/
+# Копіюємо файл залежностей у контейнер
+COPY requirements.txt .
+# Встановлюємо залежності
 RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . /app/
-RUN python manage.py collectstatic --noinput
-
+# Копіюємо вміст проекту в контейнер
+COPY . .
+# Відкриваємо порт, який використовується Django
 EXPOSE 8000
-
-ENTRYPOINT [ "gunicorn", "pagination.wsgi", "-b", "0.0.0.0:8000" ]
+# Запускаємо сервер Django
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
