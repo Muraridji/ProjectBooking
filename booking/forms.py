@@ -19,10 +19,10 @@ class PlaceFilterForm(forms.Form):
     )
 
 class BookingForm(forms.Form):
-    username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'required': True}))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'required': True}))
-    start_time = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'required': True}))
-    end_time = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'required': True}))
+    username = forms.CharField(label="Користувач",max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'required': True}))
+    email = forms.EmailField(label="Пошта", widget=forms.EmailInput(attrs={'class': 'form-control', 'required': True}))
+    start_time = forms.DateField(label="Дата початку", widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'required': True}))
+    end_time = forms.DateField(label="Дата кiнця", widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'required': True}))
 
     def clean(self):
         cleaned_data = super().clean()

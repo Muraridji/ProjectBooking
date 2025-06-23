@@ -122,6 +122,10 @@
     .fc-event:hover {
         background-color: #007acc !important;
     }
+
+    #booking-modal label {
+        color: white;
+    }
 </style>
 
 <body>
@@ -164,7 +168,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ place.title }}</h5>
                         <p class="card-text"><strong>Опис:</strong> {{ place.body }}</p>
-                        <p class="card-text"><strong>Ціна:<span class="text-success"> {{ place.price }} грн</span></p></strong>
+                        <p class="card-text"><strong>Ціна:<span class="text-success"> {{ place.price }} грн/за добу</span></p></strong>
                         <p class="card-text"><strong>Ємність:</strong> До <strong class="text-danger">{{ place.capacity }}</strong> осіб</p>
                         <button class="btn btn-outline-primary open-modal click-sound" data-place-id="{{ place.id }}">Зняти</button>
                     </div>
@@ -198,7 +202,9 @@
             <form id="booking-form" method="post">
                 {% csrf_token %}
                 <input type="hidden" id="place_id" name="place_id">
-                {{ booking_form.as_p }}
+                <p>
+                    {{ booking_form.as_p }}
+                </p>
                 <button type="submit" class="btn btn-primary w-100 alt-click-sound">Підтвердити бронювання</button>
             </form>            
         </div>
